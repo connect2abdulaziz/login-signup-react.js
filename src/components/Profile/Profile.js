@@ -1,24 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
 import basestyle from "../Base.module.css";
 import { useNavigate } from "react-router-dom";
+import UserContext from "../../context/UserContext";
 
-const Profile = ({ setUserState, username }) => {
+const Profile = () => {
   const navigate = useNavigate();
-
+  const { user } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
   // Function to handle logout
   const logoutHandler = () => {
-    setUserState({}); // Clear user state
-    localStorage.removeItem('token'); // Remove token from localStorage
+    setUser(null);
     navigate("/login", { replace: true }); // Redirect to login page
   };
 
   return (
     <div className="profile">
-      <h1 style={{ color: "white" }}>Welcome {username} !!</h1>
-      <button
-        className={basestyle.button_common}
-        onClick={logoutHandler}
-      >
+      <h1 style={{ color: "white" }}>Welcome {user.firstName} !!</h1>
+      <button className={basestyle.button_common} onClick={logoutHandler}>
         Logout
       </button>
     </div>
