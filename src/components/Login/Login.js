@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext} from "react";
 import basestyle from "../Base.module.css";
 import loginstyle from "./Login.module.css";
 import { useNavigate, NavLink } from "react-router-dom";
@@ -40,42 +40,39 @@ const Login = () => {
   };
 
   // Function to handle form submission
-  const loginHandler = () => {
+  const loginHandler = async(e) => {
+    e.preventDefault();
     const errors = validateForm(user);
     setFormErrors(errors);
+    if (Object.keys(errors).length !== 0) return;
+  
+    // Mock API call to fetch user data
     const USERS_URL = "https://669a14139ba098ed61fe3c1c.mockapi.io/api/users";
-    if (Object.keys(errors).length === 0) {
-      fetch(USERS_URL, {
+    try{
+      const response = await fetch(USERS_URL, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-      })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        //console.log("Success:", data);
-        const validUser = data.find(
-          (u) => u.email === user.email && u.password === user.password
-        );
-        //console.log(validUser);
-        if (validUser) {
-          setUser(validUser);
-          navigate("/profile", { replace: true });
-          alert("Login successful!");
-        } else {
-          throw new Error("Invalid credentials. Please try again.");
-        }
-      })
-      .catch(() => {
-          alert("Invalid credentials. Please try again.");
       });
-    }
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const users = await response.json();
 
+      const validUser = users.find(
+        (u) => u.email === user.email && u.password === user.password
+      );
+      if (validUser) {
+        setUser(validUser);
+        navigate("/profile", { replace: true });
+        alert("Login successful!");
+      } else {
+        throw new Error("Invalid credentials. Please try again.");
+      }
+    }catch(error){
+      alert("Invalid credentials. Please try again.");
+    }
   };
 
   return (

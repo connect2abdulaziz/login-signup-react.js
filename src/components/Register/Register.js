@@ -50,35 +50,30 @@ const Register = () => {
   };
 
   // Function to handle form submission
-  const signupHandler = () => {
+  const signupHandler = async(e) => {
+    e.preventDefault();
     const errors = validateForm(user);
     setFormErrors(errors);
+    if(Object.keys(errors).length !== 0) return;
     const USERS_URL = "https://669a14139ba098ed61fe3c1c.mockapi.io/api/users";
-
-    if (Object.keys(errors).length === 0) {
-      
-      fetch(USERS_URL, {
+    try{
+      const response = await fetch(USERS_URL,{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(user),
-      })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Success:", data);
-        alert("Signup Success!");
-        navigate("/login", { replace: true });
-      })
-      .catch((error) => {
-        //console.error("Signup Error:", error);
-        alert("Signup failed. Please try again.");
       });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      console.log("Success:", data);
+      alert("Signup Success!");
+      navigate("/login", { replace: true });
+      
+    }catch(error){
+      alert("Signup failed. Please try again.");
     }
   };
 
