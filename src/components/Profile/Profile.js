@@ -8,7 +8,8 @@ const Profile = () => {
   const { user } = useContext(UserContext);
   const { setUser } = useContext(UserContext);
   // Function to handle logout
-  const logoutHandler = () => {
+  const logoutHandler = (e) => {
+    e.preventDefault();
     setUser(null);
     navigate("/login", { replace: true }); // Redirect to login page
   };
